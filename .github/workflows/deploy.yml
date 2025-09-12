@@ -1,13 +1,13 @@
-name: Simple SSH to EC2
+name: Deploy to EC2
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:   # <--- manual trigger enabled here
+  workflow_dispatch:
 
 jobs:
-  ssh_job:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,9 +19,21 @@ jobs:
       - name: Add EC2 to known_hosts
         run: ssh-keyscan -H ${{ secrets.EC2_PUBLIC_IP }} >> ~/.ssh/known_hosts
 
-      - name: SSH and create directory and file on EC2
+      - name: Clone or update repo on EC2
         run: |
           ssh ec2-user@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
-            mkdir -p ~/test-directory
-            echo "This is a test file" > ~/test-directory/test-file.txt
+            if [ ! -d ~/sample.daytrader7 ]; then
+              git clone git@github.com:YOUR_GITHUB_USERNAME/YOUR_REPO.git ~/sample.daytrader7
+            else
+              cd ~/sample.daytrader7
+              git pull origin main
+            fi
           EOF
+
+      - name: Build the project on EC2
+        run: |
+          ssh ec2-user@${{ secrets.EC2_PUBLIC_IP }} "cd ~/sample.daytrader7 && mvn install"
+
+      - name: Start Liberty server on EC2
+        run: |
+          ssh ec2-user@${{ secrets.EC2_PUBLIC_IP }} "cd ~/sample.daytrader7/daytrader-ee7 && nohup mvn liberty:run > liberty.log 2>&1 &"

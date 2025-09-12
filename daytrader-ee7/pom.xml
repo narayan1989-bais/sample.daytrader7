@@ -77,6 +77,19 @@
                 </modules>
             </configuration>
         </plugin>
+
+
+<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-compiler-plugin</artifactId>
+  <version>3.8.1</version>  <!-- Stable version -->
+  <configuration>
+    <source>1.8</source>       <!-- or 11, depending on your JDK -->
+    <target>1.8</target>       <!-- same as source -->
+  </configuration>
+</plugin>
+
+
          <plugin>
             <groupId>io.openliberty.tools</groupId>
             <artifactId>liberty-maven-plugin</artifactId>

@@ -23,7 +23,7 @@ jobs:
         run: |
           ssh ec2-user@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
             if [ ! -d ~/sample.daytrader7 ]; then
-              git clone git@github.com:YOUR_GITHUB_USERNAME/YOUR_REPO.git ~/sample.daytrader7
+              git clone https://github.com/narayan1989-bais/sample.daytrader7.git
             else
               cd ~/sample.daytrader7
               git pull origin main

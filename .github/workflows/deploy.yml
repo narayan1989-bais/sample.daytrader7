@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -40,16 +41,15 @@ jobs:
         run: |
           ssh -T ec2-user@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
             PORT=9082
-            PID=\$(lsof -ti tcp:\$PORT)
+            PID=$(lsof -ti tcp:$PORT)
 
-            if [ ! -z "\$PID" ]; then
-              echo "Port \$PORT is in use by PID \$PID. Killing it..."
-              kill -9 \$PID
+            if [ ! -z "$PID" ]; then
+              echo "Port $PORT is in use by PID $PID. Killing it..."
+              kill -9 $PID
               sleep 2
             fi
 
             cd ~/sample.daytrader7/daytrader-ee7
-
             echo "Starting Liberty server in background..."
             nohup mvn liberty:run > liberty.log 2>&1 &
             echo "Liberty server restarted."

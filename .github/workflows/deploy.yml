@@ -36,4 +36,4 @@ jobs:
 
       - name: Start Liberty server on EC2
         run: |
-          ssh ec2-user@${{ secrets.EC2_PUBLIC_IP }} "cd ~/sample.daytrader7/daytrader-ee7 && nohup mvn liberty:run > liberty.log 2>&1 &"
+          ssh ec2-user@${{ secrets.EC2_PUBLIC_IP }} "cd ~/sample.daytrader7/daytrader-ee7 && mvn liberty:run"

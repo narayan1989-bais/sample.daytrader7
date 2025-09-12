@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      
+  workflow_dispatch:   # <--- manual trigger enabled here
 
 jobs:
   ssh_job:

@@ -21,7 +21,7 @@ jobs:
 
       - name: Clone or update repo on EC2
         run: |
-          ssh ec2-user@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
+          ssh -T ec2-user@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
             if [ ! -d ~/sample.daytrader7 ]; then
               git clone https://github.com/narayan1989-bais/sample.daytrader7.git
             else
@@ -32,8 +32,22 @@ jobs:
 
       - name: Build the project on EC2
         run: |
-          ssh ec2-user@${{ secrets.EC2_PUBLIC_IP }} "cd ~/sample.daytrader7 && mvn install"
+          ssh -T ec2-user@${{ secrets.EC2_PUBLIC_IP }} "cd ~/sample.daytrader7 && mvn install"
 
-      - name: Start Liberty server on EC2
+      - name: Restart Liberty server on EC2
         run: |
-          ssh ec2-user@${{ secrets.EC2_PUBLIC_IP }} "cd ~/sample.daytrader7/daytrader-ee7 && mvn liberty:run"
+          ssh -T ec2-user@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
+            # Kill any process using port 9082 (default Liberty HTTP port)
+            PORT=9082
+            PID=\$(lsof -ti tcp:\$PORT)
+            if [ ! -z "\$PID" ]; then
+              echo "Port \$PORT is in use by PID \$PID. Killing it..."
+              kill -9 \$PID
+              sleep 2
+            fi
+
+            # Start the Liberty server in the background
+            cd ~/sample.daytrader7/daytrader-ee7
+            nohup mvn liberty:run > liberty.log 2>&1 &
+            echo "Liberty server restarted."
+          EOF

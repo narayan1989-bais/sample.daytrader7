@@ -3,15 +3,9 @@ os: linux
 files:
   - source: /
     destination: /home/ec2-user/sample.daytrader7
-permissions:
-  - object: deploy.sh
-    pattern: deploy.sh
-    owner: ec2-user
-    group: ec2-user
-    mode: 0755
 
 hooks:
   AfterInstall:
     - location: deploy.sh
-      timeout: 300
+      timeout: 600
       runas: ec2-user

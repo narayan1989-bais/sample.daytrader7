@@ -9,3 +9,6 @@ hooks:
     - location: scripts/deploy.sh
       timeout: 300
       runas: ec2-user
+    - location: scripts/fix-permission.sh
+      timeout: 60
+      runas: ec2-user

@@ -1,21 +1,22 @@
 #!/bin/bash
 
-APP_DIR="/home/ec2-user/sample.daytrader7"
+cd /home/ec2-user/sample.daytrader7
+
+echo "Pulling latest changes"
+git pull origin master
+
+echo "Running Maven install"
+mvn install
+
+# Kill any process on 9082
 PORT=9082
-
-cd "$APP_DIR"
-
-# Build your app on EC2
-mvn clean install
-
-# Restart Liberty server
 PID=$(lsof -ti tcp:$PORT)
 if [ ! -z "$PID" ]; then
+  echo "Killing PID $PID"
   kill -9 $PID
   sleep 2
 fi
 
-cd "$APP_DIR/daytrader-ee7"
+echo "Starting Liberty server"
+cd daytrader-ee7
 nohup mvn liberty:run > liberty.log 2>&1 &
-
-echo "Deployment complete."

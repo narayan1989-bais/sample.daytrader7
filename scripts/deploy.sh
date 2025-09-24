@@ -1,15 +1,6 @@
-##!/bin/bash
+#!/bin/bash
 REPO_DIR="/home/ec2-user/sample.daytrader7"
 REPO_URL="https://github.com/narayan1989-bais/sample.daytrader7.git"
-PORT=9082
-
-# Kill process on port 9082 if running
-PID=$(lsof -ti tcp:$PORT)
-if [ -n "$PID" ]; then
-  echo "Killing process on port $PORT with PID $PID"
-  kill -9 $PID
-  sleep 2
-fi
 
 # Remove existing directory if it exists
 if [ -d "$REPO_DIR" ]; then

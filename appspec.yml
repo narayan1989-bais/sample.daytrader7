@@ -2,25 +2,9 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /home/ec2-user
-
+    destination: /home/ec2-user/sample.daytrader7
 hooks:
   AfterInstall:
-    - location: /bin/bash
+    - location: scripts/after_install.sh
       timeout: 300
       runas: ec2-user
-      # Run commands inline using the -c option
-      # Use quotes carefully (avoid YAML parsing issues)
-      # Alternatively, use a deploy.sh script for complex commands
-      # Here is an example to clone, build, and run Liberty
-      # This runs commands sequentially
-      arguments:
-        - "-c"
-        - |
-          cd /home/ec2-user
-          rm -rf sample.daytrader7
-          git clone https://github.com/narayan1989-bais/sample.daytrader7.git
-          cd sample.daytrader7
-          mvn clean install
-          cd daytrader-ee7
-          nohup mvn liberty:run > liberty.log 2>&1 &

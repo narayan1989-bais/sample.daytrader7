@@ -14,11 +14,8 @@ git clone https://github.com/narayan1989-bais/sample.daytrader7.git "$WORKDIR"
 
 cd "$WORKDIR"
 
-echo "Pulling latest changes"
-git pull origin master
-
 echo "Running Maven install"
-mvn clean install
+#mvn clean install
 
 # Kill any process on port 9082
 PORT=9082

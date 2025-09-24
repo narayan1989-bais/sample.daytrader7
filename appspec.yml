@@ -6,6 +6,8 @@ files:
 
 hooks:
   AfterInstall:
-    - location: deploy.sh
+    - location: /bin/bash
       timeout: 600
       runas: ec2-user
+      args:
+        - deploy.sh

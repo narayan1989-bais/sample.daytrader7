@@ -16,7 +16,7 @@ echo "Cloned repo" >> /home/ec2-user/deploy.log
 cd /home/ec2-user/sample.daytrader7
 mvn clean install >> /home/ec2-user/deploy.log 2>&1
 
-# Start Liberty server
+## Start Liberty server
 cd daytrader-ee7
 nohup mvn liberty:run > /home/ec2-user/liberty.log 2>&1 &
 

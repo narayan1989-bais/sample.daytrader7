@@ -1,14 +1,26 @@
 #!/bin/bash
 
-cd /home/ec2-user/sample.daytrader7
+WORKDIR=/home/ec2-user/sample.daytrader7
+
+# Remove existing folder if it exists
+if [ -d "$WORKDIR" ]; then
+  echo "Removing existing directory $WORKDIR"
+  rm -rf "$WORKDIR"
+fi
+
+# Clone fresh repo
+echo "Cloning repository"
+git clone https://github.com/narayan1989-bais/sample.daytrader7.git "$WORKDIR"
+
+cd "$WORKDIR"
 
 echo "Pulling latest changes"
 git pull origin master
 
 echo "Running Maven install"
-#mvn install
+mvn clean install
 
-# Kill any process on 9082
+# Kill any process on port 9082
 PORT=9082
 PID=$(lsof -ti tcp:$PORT)
 if [ ! -z "$PID" ]; then

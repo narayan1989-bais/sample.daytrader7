@@ -1,36 +1,23 @@
 #!/bin/bash
-set -e  # Exit on error
+set -x
 
-REPO_DIR="/home/ec2-user/sample.daytrader7"
-REPO_URL="https://github.com/narayan1989-bais/sample.daytrader7.git"
+echo "Starting deploy script..." > /home/ec2-user/deploy.log
+date >> /home/ec2-user/deploy.log
 
-# Remove folder if exists
-if [ -d "$REPO_DIR" ]; then
-  echo "Removing existing folder $REPO_DIR"
-  rm -rf "$REPO_DIR"
-fi
+# Remove old repo
+rm -rf /home/ec2-user/sample.daytrader7
+echo "Removed old repo" >> /home/ec2-user/deploy.log
 
 # Clone fresh repo
-echo "Cloning repository..."
-git clone "$REPO_URL" "$REPO_DIR"
+git clone https://github.com/narayan1989-bais/sample.daytrader7.git /home/ec2-user/sample.daytrader7
+echo "Cloned repo" >> /home/ec2-user/deploy.log
 
-# Build the project
-echo "Building project with Maven..."
-cd "$REPO_DIR"
-mvn clean install
-
-# Kill any process on port 9082
-PORT=9082
-PID=$(lsof -ti tcp:$PORT)
-if [ -n "$PID" ]; then
-  echo "Killing process on port $PORT with PID $PID"
-  kill -9 "$PID"
-  sleep 2
-fi
+# Build project
+cd /home/ec2-user/sample.daytrader7
+mvn clean install >> /home/ec2-user/deploy.log 2>&1
 
 # Start Liberty server
-echo "Starting Liberty server..."
-cd "$REPO_DIR/daytrader-ee7"
-nohup mvn liberty:run > liberty.log 2>&1 &
+cd daytrader-ee7
+nohup mvn liberty:run > /home/ec2-user/liberty.log 2>&1 &
 
-echo "Deployment completed successfully."
+echo "Liberty started" >> /home/ec2-user/deploy.log

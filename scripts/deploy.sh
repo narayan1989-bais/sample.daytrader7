@@ -1,4 +1,6 @@
 #!/bin/bash
+set -x
+set -e
 
 REPO_DIR="/home/ec2-user/sample.daytrader7"
 REPO_URL="https://github.com/narayan1989-bais/sample.daytrader7.git"
@@ -9,6 +11,10 @@ else
   cd "$REPO_DIR"
   git pull origin master
 fi
+
+# Build the project
+cd "$REPO_DIR"
+mvn clean install
 
 # Kill process on port 9082 if running
 PORT=9082

@@ -6,7 +6,7 @@ REPO_DIR="/home/ec2-user/sample.daytrader7"
 REPO_URL="https://github.com/narayan1989-bais/sample.daytrader7.git"
 PORT=9082
 
-# Kill process if running
+## Kill process if running
 PID=$(lsof -ti tcp:$PORT)
 if [ -n "$PID" ]; then
   echo "Killing process on port $PORT with PID $PID"

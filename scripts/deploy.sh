@@ -6,7 +6,7 @@ echo "Pulling latest changes"
 git pull origin master
 
 echo "Running Maven install"
-mvn install
+#mvn install
 
 # Kill any process on 9082
 PORT=9082

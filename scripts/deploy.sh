@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 
 echo "Starting deploy script..." > /home/ec2-user/deploy.log
 date >> /home/ec2-user/deploy.log

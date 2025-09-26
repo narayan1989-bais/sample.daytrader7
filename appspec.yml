@@ -3,11 +3,8 @@ os: linux
 files:
   - source: /
     destination: /home/ec2-user/sample.daytrader7
-
 hooks:
   AfterInstall:
-    - location: /bin/bash
-      timeout: 600
+    - location: scripts/deploy.sh
+      timeout: 300
       runas: ec2-user
-      args:
-        - deploy.sh

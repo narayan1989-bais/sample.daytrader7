@@ -3,7 +3,12 @@ os: linux
 files:
   - source: /
     destination: /home/ec2-user/sample.daytrader7
+
 hooks:
+  BeforeInstall:
+    - location: scripts/fix-permissions.sh
+      timeout: 60
+      runas: ec2-user
   AfterInstall:
     - location: scripts/deploy.sh
       timeout: 300

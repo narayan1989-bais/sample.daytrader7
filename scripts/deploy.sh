@@ -1,5 +1,11 @@
 #!/bin/bash
 
+
+exec > /home/ec2-user/deploy-debug.log 2>&1
+set -x
+
+echo "Starting deploy.sh script at $(date)"
+
 LIBERTYLOG=/home/ec2-user/liberty.log
 APP_DIR=/home/ec2-user/sample.daytrader7
 

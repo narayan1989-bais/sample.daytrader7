@@ -1,41 +1,29 @@
 #!/bin/bash
-
-
+set -e
 exec > /home/ec2-user/deploy-debug.log 2>&1
-set -x
+echo "Starting deploy.sh at $(date)"
 
-echo "Starting deploy.sh script at $(date)"
+APP_DIR="/home/ec2-user/sample.daytrader7"
+LIBERTY_LOG="$APP_DIR/liberty.log"
 
-LIBERTYLOG=/home/ec2-user/liberty.log
-APP_DIR=/home/ec2-user/sample.daytrader7
-
-echo "Starting deployment..." > $LIBERTYLOG
-date >> $LIBERTYLOG
-
-# Remove any previous deployment (optional – you can let CodeDeploy overwrite too)
+# Ensure ec2-user owns the app directory so we can delete it
 if [ -d "$APP_DIR" ]; then
-  echo "Removing existing application directory..." >> $LIBERTYLOG
+  echo "Changing ownership of $APP_DIR to ec2-user"
+  sudo chown -R ec2-user:ec2-user "$APP_DIR"
+  
+  echo "Removing old application directory"
   rm -rf "$APP_DIR"
 fi
 
-# CodeDeploy will copy new files now – no need to clone manually
+echo "Cloning repository"
+git clone https://github.com/narayan1989-bais/sample.daytrader7.git "$APP_DIR"
 
-# Wait until CodeDeploy places files (this script runs AfterInstall, so it should be ready)
-if [ ! -f "$APP_DIR/pom.xml" ]; then
-  echo "ERROR: Application folder missing or deployment failed!" >> $LIBERTYLOG
-  exit 1
-fi
+echo "Running Maven install"
+cd "$APP_DIR"
+mvn install
 
-echo "Building project..." >> $LIBERTYLOG
-cd "$APP_DIR" || exit 1
-mvn install >> $LIBERTYLOG 2>&1
-if [ $? -ne 0 ]; then
-  echo "Maven build failed!" >> $LIBERTYLOG
-  exit 1
-fi
+echo "Starting Liberty server"
+cd daytrader-ee7
+nohup mvn liberty:run > "$LIBERTY_LOG" 2>&1 &
 
-echo "Starting Liberty server..." >> $LIBERTYLOG
-cd "$APP_DIR/daytrader-ee7" || exit 1
-nohup mvn liberty:run >> $LIBERTYLOG 2>&1 &
-
-echo "Liberty server started at $(date)" >> $LIBERTYLOG
+echo "Deployment completed at $(date)"

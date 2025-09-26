@@ -1,5 +1,5 @@
 #!/bin/bash
-
+#
 LIBERTYLOG=liberty.log
 
 echo "Cloning repo"

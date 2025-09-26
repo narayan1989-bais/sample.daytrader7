@@ -1,24 +1,35 @@
 #!/bin/bash
-#
-LIBERTYLOG=liberty.log
 
-echo "Cloning repo"
-git clone https://github.com/narayan1989-bais/sample.daytrader7.git
-if [ $? -ne 0 ]; then
-  echo "Git clone failed!"
+LIBERTYLOG=/home/ec2-user/liberty.log
+APP_DIR=/home/ec2-user/sample.daytrader7
+
+echo "Starting deployment..." > $LIBERTYLOG
+date >> $LIBERTYLOG
+
+# Remove any previous deployment (optional – you can let CodeDeploy overwrite too)
+if [ -d "$APP_DIR" ]; then
+  echo "Removing existing application directory..." >> $LIBERTYLOG
+  rm -rf "$APP_DIR"
+fi
+
+# CodeDeploy will copy new files now – no need to clone manually
+
+# Wait until CodeDeploy places files (this script runs AfterInstall, so it should be ready)
+if [ ! -f "$APP_DIR/pom.xml" ]; then
+  echo "ERROR: Application folder missing or deployment failed!" >> $LIBERTYLOG
   exit 1
 fi
 
-echo "Running mvn install"
-cd sample.daytrader7
-mvn install
+echo "Building project..." >> $LIBERTYLOG
+cd "$APP_DIR" || exit 1
+mvn install >> $LIBERTYLOG 2>&1
 if [ $? -ne 0 ]; then
-  echo "Maven install failed!"
+  echo "Maven build failed!" >> $LIBERTYLOG
   exit 1
 fi
 
-echo "Changing directory to daytrader-ee7 and starting Liberty server"
-cd daytrader-ee7 || { echo "Failed to cd to daytrader-ee7"; exit 1; }
-mvn liberty:run > $LIBERTYLOG 2>&1 &
+echo "Starting Liberty server..." >> $LIBERTYLOG
+cd "$APP_DIR/daytrader-ee7" || exit 1
+nohup mvn liberty:run >> $LIBERTYLOG 2>&1 &
 
-echo "Liberty server started, logs at $LIBERTYLOG"
+echo "Liberty server started at $(date)" >> $LIBERTYLOG

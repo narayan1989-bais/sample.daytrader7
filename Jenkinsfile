@@ -14,14 +14,14 @@ pipeline {
       steps {
         sh '''
           sudo -u ec2-user git clone https://github.com/narayan1989-bais/sample.daytrader7.git /home/ec2-user/sample.daytrader7
-          sudo -u ec2-user bash -c "cd /home/ec2-user/sample.daytrader7 && mvn install"
+          sudo -u ec2-user bash -c "cd /home/ec2-user/sample.daytrader7 && /opt/maven/bin/mvn install"
         '''
       }
     }
     stage('Start App') {
       steps {
         sh '''
-          sudo -u ec2-user bash -c "cd /home/ec2-user/sample.daytrader7/daytrader-ee7 && nohup mvn liberty:run > app.log 2>&1 &"
+          sudo -u ec2-user bash -c "cd /home/ec2-user/sample.daytrader7/daytrader-ee7 && nohup /opt/maven/bin/mvn liberty:run > app.log 2>&1 &"
           sleep 5
           sudo -u ec2-user tail -n 20 /home/ec2-user/sample.daytrader7/daytrader-ee7/app.log
         '''
